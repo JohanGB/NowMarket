@@ -1,0 +1,160 @@
+# Fuentes públicas que descarga `python -m mercado_al_dia.ingesta.descargar`.
+#
+# Cada fuente:
+#   id            identificador único (sin espacios)
+#   descripcion   texto libre
+#   url           enlace exacto del archivo (salido de la página oficial indicada)
+#   pagina_origen página oficial donde aparece publicado el enlace
+#   destino       ruta relativa dentro de data/raw/ (se usa "/" también en Windows)
+#   tipo          xlsx | zip | pdf | txt | csv  (sirve para validar que no llegó una página HTML de error)
+#   activo        true/false. Las fuentes inactivas se ignoran.
+#
+# Revisión de enlaces: 11-nov-2026 (ver docs/fase0_datos.md).
+
+descarga:
+  tiempo_espera_s: 60          # tiempo máximo por intento
+  reintentos: 3                # intentos totales por archivo
+  espera_entre_reintentos_s: 5 # se duplica en cada reintento
+  user_agent: "mercado-al-dia/0.1 (descarga de datos publicos; uso no comercial)"
+
+fuentes:
+  # ---------- SIPSA_P: series históricas de precios mayoristas (mensuales) ----------
+  - id: sipsa_p_mensual_2013_2017
+    descripcion: "SIPSA precios mayoristas, series históricas 2013-2017"
+    url: "https://www.dane.gov.co/files/investigaciones/agropecuario/sipsa/series-historicas/series-historicas-precios-mayoristas.xlsx"
+    pagina_origen: "https://www.dane.gov.co/index.php/estadisticas-por-tema/agropecuario/sistema-de-informacion-de-precios-sipsa/mayoristas-boletin-mensual-1"
+    destino: "sipsa/precios_mensual/sipsa_p_serie_mensual_2013_2017.xlsx"
+    tipo: xlsx
+    activo: true
+
+  - id: sipsa_p_mensual_2018
+    descripcion: "SIPSA precios mayoristas, series históricas 2018"
+    url: "https://www.dane.gov.co/files/investigaciones/agropecuario/sipsa/series-historicas/series-historicas-precios-mayoristas-2018.xlsx"
+    pagina_origen: "https://www.dane.gov.co/index.php/estadisticas-por-tema/agropecuario/sistema-de-informacion-de-precios-sipsa/mayoristas-boletin-mensual-1"
+    destino: "sipsa/precios_mensual/sipsa_p_serie_mensual_2018.xlsx"
+    tipo: xlsx
+    activo: true
+
+  - id: sipsa_p_mensual_2019
+    descripcion: "SIPSA precios mayoristas, series históricas 2019"
+    url: "https://www.dane.gov.co/files/investigaciones/agropecuario/sipsa/series-historicas/series-historicas-precios-mayoristas-2019.xlsx"
+    pagina_origen: "https://www.dane.gov.co/index.php/estadisticas-por-tema/agropecuario/sistema-de-informacion-de-precios-sipsa/mayoristas-boletin-mensual-1"
+    destino: "sipsa/precios_mensual/sipsa_p_serie_mensual_2019.xlsx"
+    tipo: xlsx
+    activo: true
+
+  - id: sipsa_p_mensual_2020
+    descripcion: "SIPSA precios mayoristas, series históricas 2020"
+    url: "https://www.dane.gov.co/files/investigaciones/agropecuario/sipsa/series-historicas/series-historicas-precios-mayoristas-2020.xlsx"
+    pagina_origen: "https://www.dane.gov.co/index.php/estadisticas-por-tema/agropecuario/sistema-de-informacion-de-precios-sipsa/mayoristas-boletin-mensual-1"
+    destino: "sipsa/precios_mensual/sipsa_p_serie_mensual_2020.xlsx"
+    tipo: xlsx
+    activo: true
+
+  - id: sipsa_p_mensual_2021
+    descripcion: "SIPSA precios mayoristas, series históricas 2021"
+    url: "https://www.dane.gov.co/files/investigaciones/agropecuario/sipsa/series-historicas/series-historicas-precios-mayoristas-2021.xlsx"
+    pagina_origen: "https://www.dane.gov.co/index.php/estadisticas-por-tema/agropecuario/sistema-de-informacion-de-precios-sipsa/mayoristas-boletin-mensual-1"
+    destino: "sipsa/precios_mensual/sipsa_p_serie_mensual_2021.xlsx"
+    tipo: xlsx
+    activo: true
+
+  - id: sipsa_p_mensual_2022
+    descripcion: "SIPSA precios mayoristas, series históricas 2022"
+    url: "https://www.dane.gov.co/files/investigaciones/agropecuario/sipsa/series-historicas/series-historicas-precios-mayoristas-2022.xlsx"
+    pagina_origen: "https://www.dane.gov.co/index.php/estadisticas-por-tema/agropecuario/sistema-de-informacion-de-precios-sipsa/mayoristas-boletin-mensual-1"
+    destino: "sipsa/precios_mensual/sipsa_p_serie_mensual_2022.xlsx"
+    tipo: xlsx
+    activo: true
+
+  - id: sipsa_p_mensual_2023
+    descripcion: "SIPSA precios mayoristas, series históricas 2023 (archivo publicado como Dic2023)"
+    url: "https://www.dane.gov.co/files/operaciones/SIPSA/anex-SIPSA-SerieHistoricaMayorista-Dic2023.xlsx"
+    pagina_origen: "https://www.dane.gov.co/index.php/estadisticas-por-tema/agropecuario/sistema-de-informacion-de-precios-sipsa/mayoristas-boletin-mensual-1"
+    destino: "sipsa/precios_mensual/sipsa_p_serie_mensual_2023.xlsx"
+    tipo: xlsx
+    activo: true
+
+  - id: sipsa_p_mensual_2024
+    descripcion: "SIPSA precios mayoristas, series históricas 2024"
+    url: "https://www.dane.gov.co/files/operaciones/SIPSA/anex-SIPSA-SerieHistoricaMayorista-2024.xlsx"
+    pagina_origen: "https://www.dane.gov.co/index.php/estadisticas-por-tema/agropecuario/sistema-de-informacion-de-precios-sipsa/mayoristas-boletin-mensual-1"
+    destino: "sipsa/precios_mensual/sipsa_p_serie_mensual_2024.xlsx"
+    tipo: xlsx
+    activo: true
+
+  - id: sipsa_p_mensual_2025
+    descripcion: "SIPSA precios mayoristas, series históricas 2025"
+    url: "https://www.dane.gov.co/files/operaciones/SIPSA/anex-SIPSA-SerieHistoricaMayorista-2025.xlsx"
+    pagina_origen: "https://www.dane.gov.co/index.php/estadisticas-por-tema/agropecuario/sistema-de-informacion-de-precios-sipsa/mayoristas-boletin-mensual-1"
+    destino: "sipsa/precios_mensual/sipsa_p_serie_mensual_2025.xlsx"
+    tipo: xlsx
+    activo: true
+
+  - id: sipsa_p_mensual_2026
+    descripcion: "SIPSA precios mayoristas, series históricas 2026 (parcial; el DANE lo reemplaza cada mes en la misma URL)"
+    url: "https://www.dane.gov.co/files/operaciones/SIPSA/anex-SIPSA-SerieHistoricaMayorista-2026.xlsx"
+    pagina_origen: "https://www.dane.gov.co/index.php/estadisticas-por-tema/agropecuario/sistema-de-informacion-de-precios-sipsa/mayoristas-boletin-mensual-1"
+    destino: "sipsa/precios_mensual/sipsa_p_serie_mensual_2026.xlsx"
+    tipo: xlsx
+    activo: true
+
+  # ---------- SIPSA_A: abastecimiento ----------
+  - id: sipsa_a_series_2013_2026
+    descripcion: "SIPSA abastecimiento, series históricas 2013-2026"
+    url: "https://www.dane.gov.co/files/operaciones/SIPSA/Series-historicas-abastecimiento-2013-2026.xlsx"
+    pagina_origen: "https://www.dane.gov.co/index.php/estadisticas-por-tema/agropecuario/sistema-de-informacion-de-precios-sipsa/componente-abastecimientos-1"
+    destino: "sipsa/abastecimiento/sipsa_a_series_historicas_2013_2026.xlsx"
+    tipo: xlsx
+    activo: true
+
+  # ---------- SIPSA_P: muestra de anexo semanal (para conocer la estructura) ----------
+  - id: sipsa_p_semanal_muestra_2026w44
+    descripcion: "Anexo boletín semanal 31-oct a 06-nov-2026 (muestra de estructura)"
+    url: "https://www.dane.gov.co/files/operaciones/SIPSA/anex-SIPSASemanal-31oct06nov-2026.xlsx"
+    pagina_origen: "https://www.dane.gov.co/index.php/estadisticas-por-tema/agropecuario/sistema-de-informacion-de-precios-sipsa/mayoristas-boletin-semanal-1"
+    destino: "sipsa/precios_semanal/sipsa_p_semanal_2026-10-31_2026-11-06.xlsx"
+    tipo: xlsx
+    activo: true
+
+  # ---------- Exógenas ----------
+  - id: noaa_oni
+    descripcion: "Índice Oceánico El Niño (ONI), NOAA CPC, texto plano"
+    url: "https://www.cpc.ncep.noaa.gov/data/indices/oni.ascii.txt"
+    pagina_origen: "https://www.cpc.ncep.noaa.gov/data/indices/"
+    destino: "exogenas/noaa_oni.ascii.txt"
+    tipo: txt
+    activo: true
+
+  # ---------- Opcionales (desactivados) ----------
+  - id: sipsa_a_microdato_2026
+    descripcion: "SIPSA abastecimiento, microdatos anonimizados 2026 (procedencia por municipio)"
+    url: "https://www.dane.gov.co/files/operaciones/SIPSA/anex-Microdato-abastecimiento-2026.xlsx"
+    pagina_origen: "https://www.dane.gov.co/index.php/estadisticas-por-tema/agropecuario/sistema-de-informacion-de-precios-sipsa/componente-abastecimientos-1"
+    destino: "sipsa/abastecimiento_microdatos/sipsa_a_microdato_2026.xlsx"
+    tipo: xlsx
+    activo: false
+
+  - id: sipsa_a_microdato_2025
+    descripcion: "SIPSA abastecimiento, microdatos anonimizados 2025"
+    url: "https://www.dane.gov.co/files/operaciones/SIPSA/anex-Microdato-abastecimiento-2025.xlsx"
+    pagina_origen: "https://www.dane.gov.co/index.php/estadisticas-por-tema/agropecuario/sistema-de-informacion-de-precios-sipsa/componente-abastecimientos-1"
+    destino: "sipsa/abastecimiento_microdatos/sipsa_a_microdato_2025.xlsx"
+    tipo: xlsx
+    activo: false
+
+  - id: sipsa_a_microdato_2024
+    descripcion: "SIPSA abastecimiento, microdatos anonimizados 2024"
+    url: "https://www.dane.gov.co/files/operaciones/SIPSA/anex-Microdato-abastecimiento-2024.xlsx"
+    pagina_origen: "https://www.dane.gov.co/index.php/estadisticas-por-tema/agropecuario/sistema-de-informacion-de-precios-sipsa/componente-abastecimientos-1"
+    destino: "sipsa/abastecimiento_microdatos/sipsa_a_microdato_2024.xlsx"
+    tipo: xlsx
+    activo: false
+
+  - id: sipsa_p_boletin_semanal_pdf_2026_09_19
+    descripcion: "Boletín semanal PDF 19 a 25-sep-2026 (referencia: lista de mercados)"
+    url: "https://www.dane.gov.co/files/operaciones/SIPSA/bol-SIPSASemanal-19sep25sep-2026.pdf"
+    pagina_origen: "https://www.dane.gov.co/index.php/estadisticas-por-tema/agropecuario/sistema-de-informacion-de-precios-sipsa/mayoristas-boletin-semanal-1"
+    destino: "sipsa/boletines/bol_sipsa_semanal_2026-09-19_2026-09-25.pdf"
+    tipo: pdf
+    activo: false

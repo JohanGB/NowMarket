@@ -1,0 +1,42 @@
+# Catálogo de productos y mercados (datos, no código). Revisión: 11-nov-2026.
+
+# Unidades del precio. Fuente: nota al pie de los Excel SIPSA de 2022 y 2026, textual:
+#   "* Los precios reportados para los huevos y el bocadillo son $/unidad y los del aceite,
+#    el vinagre y el jugo de frutas $/litro."
+# Todo lo demás es $/kilogramo. Los patrones se aplican sobre el nombre sin tildes y en minúsculas.
+unidad_por_defecto: kg
+unidades:
+  - {patron: "^huevo", unidad: unidad}
+  - {patron: "^bocadillo", unidad: unidad}
+  - {patron: "^aceite", unidad: litro}
+  - {patron: "^vinagre", unidad: litro}
+  - {patron: "^jugo de fruta", unidad: litro}
+
+# Productos que el DANE renombró. Solo se unen series que (1) no se solapan en ningún mes,
+# (2) son contiguas (máximo 6 meses de hueco), (3) son del mismo grupo y (4) son el mismo
+# producto con otra etiqueta. Revisado a mano con los datos de Corabastos 2013–2026.
+equivalencias:
+  - desde: "Ciruela negra chilena"
+    hacia: "Ciruela importada"
+    motivo: "Termina en jun-2015; 'Ciruela importada' empieza en sep-2015. Mismo producto, cambia la etiqueta de origen."
+  - desde: "Ciruela negra importada"
+    hacia: "Ciruela importada"
+    motivo: "Aparece un solo mes (ago-2015), entre las dos etiquetas anteriores."
+  - desde: "Galletas saladas 3 tacos"
+    hacia: "Galletas saladas"
+    motivo: "Termina en jul-2015; 'Galletas saladas' empieza en ago-2015. Se deja de especificar la presentación."
+
+# Parejas contiguas que NO se unen, para que quede registrado por qué.
+no_equivalentes:
+  - {a: "Papaya Maradol", b: "Papaya Paulina", motivo: "Variedades distintas."}
+  - {a: "Merluza, filete importado", b: "Toyo blanco, filete congelado", motivo: "Especies distintas."}
+  - {a: "Papa R-12 negra", b: "Papa capira", motivo: "Variedades distintas."}
+  - {a: "Papa R-12 roja", b: "Papa capira", motivo: "Variedades distintas."}
+
+mercados:
+  # Decisión del autor (11-nov-2026): Corabastos es la referencia de Bogotá y la Sabana.
+  referencia: "Bogotá, D.C., Corabastos"
+  rotulo_referencia: "Corabastos (referencia para Bogotá y la Sabana)"
+  comparacion: ["Bogotá, D.C., Paloquemao"]
+  # Mercados que se guardan en el panel procesado (prefijo del nombre en los datos).
+  guardar_prefijos: ["Bogotá, D.C."]

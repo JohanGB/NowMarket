@@ -1,0 +1,20 @@
+# Parámetros del análisis de la fase 1 (sin ML). Son decisiones del proyecto, no datos oficiales.
+señales:
+  umbral_barato_caro: 0.10      # ±10 % frente a la mediana de los 12 meses anteriores
+  meses_minimos_historia: 36    # un producto entra al tablero si tiene al menos esto
+estacionalidad:
+  anios_minimos: 5              # años con tendencia calculable para estimar el perfil
+  efecto_minimo: 0.03           # cambio esperado mínimo (3 %) para dar un consejo
+  z: 2.0                        # el efecto debe superar z errores estándar
+validacion:
+  desde: "2018-01"              # primer mes que se evalúa (origen rodante; nunca se mira el futuro)
+  aciertos_minimos: 0.55        # el consejo estacional se muestra solo si acierta al menos esto
+alertas_tenderos:
+  cambio_minimo: 0.05           # avisar si la mediana del pronóstico a 1 mes cambia ±5 % o más
+cambios_de_nivel:
+  meses_recientes: 24           # mostrar un cambio de nivel solo si ocurrió en los últimos 24 meses
+  cambio_minimo: 0.15           # y si el nivel cambió al menos 15 %
+  simulaciones: 200             # series simuladas sin cambio de nivel (AR(1) ajustado a cada producto)
+  nivel: 0.95                   # el cambio debe superar el percentil 95 de lo que el detector "ve" sin cambio real
+vecinos:
+  correlacion_minima: 0.5       # "se mueve con" solo si ρ ≥ 0,5 (cambios mensuales sin temporada)

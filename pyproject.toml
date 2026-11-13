@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mercado-al-dia"
+version = "1.0.0"
+description = "Precios mayoristas de alimentos en Bogotá (SIPSA, DANE): qué está barato, pronóstico con intervalos y alertas."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = ["pyyaml>=6", "openpyxl>=3.1", "numpy>=1.26", "pandas>=2.1", "scipy>=1.11",
+                "scikit-learn>=1.3", "statsmodels>=0.14", "lightgbm>=4.0", "ruptures>=1.1"]
+
+[project.optional-dependencies]
+dev = ["pytest>=7"]
+dl = ["jax>=0.4.30", "optax>=0.2"]   # solo para el experimento de N-BEATS
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+addopts = "-p no:cacheprovider"

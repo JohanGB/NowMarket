@@ -1,0 +1,24 @@
+# Canasta de referencia para el tablero. NO es una canasta oficial del DANE: es un supuesto del
+# proyecto (docs/supuestos.md) para un hogar de 4 personas durante un mes, con productos que
+# Corabastos reporta sin interrupción desde 2013. Las cantidades se pueden cambiar aquí.
+# Las carnes no se incluyen: Corabastos dejó de reportarlas desde 2024 (las reportan los frigoríficos).
+nombre: "Canasta de referencia (hogar de 4 personas, un mes)"
+productos:
+  - {producto: "Arroz de primera", cantidad: 8}
+  - {producto: "Papa parda pastusa", cantidad: 12}
+  - {producto: "Papa criolla limpia", cantidad: 2}
+  - {producto: "Plátano hartón verde", cantidad: 4}
+  - {producto: "Yuca llanera", cantidad: 3}
+  - {producto: "Cebolla cabezona blanca", cantidad: 3}
+  - {producto: "Cebolla junca Aquitania", cantidad: 1.5}
+  - {producto: "Tomate chonto", cantidad: 4}
+  - {producto: "Zanahoria", cantidad: 2}
+  - {producto: "Fríjol cargamanto rojo", cantidad: 2}
+  - {producto: "Lenteja importada", cantidad: 1}
+  - {producto: "Huevo rojo A", cantidad: 60}        # unidades
+  - {producto: "Panela cuadrada morena", cantidad: 2}
+  - {producto: "Queso campesino", cantidad: 1.5}
+  - {producto: "Banano criollo", cantidad: 3}
+  - {producto: "Naranja Valencia", cantidad: 4}
+  - {producto: "Mora de Castilla", cantidad: 1.5}
+  - {producto: "Aguacate papelillo", cantidad: 2}

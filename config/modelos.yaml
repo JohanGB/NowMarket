@@ -1,0 +1,49 @@
+# Fase 2: protocolo de modelado. Todo lo que cambia un resultado está aquí, no en el código.
+semilla: 20261111
+horizontes: [1, 2, 3]                 # meses hacia adelante
+cuantiles: [0.1, 0.5, 0.9]            # intervalo del 80 %
+cobertura_objetivo: 0.80
+
+# Productos que se evalúan y se reportan (D-019: los 18 de la canasta).
+productos_evaluacion: canasta          # "canasta" = los de config/canasta.yaml
+# Los modelos globales (LightGBM, N-BEATS) se entrenan con todos los productos de Corabastos
+# que tengan al menos esta historia; ganan datos sin mirar el futuro.
+meses_minimos_entrenamiento: 120
+
+# Origen rodante. Un origen t usa solo precios hasta t (publicados a comienzos de t+1).
+validacion: {desde: "2021-11", hasta: "2023-10"}   # elección de modelo y calibración
+prueba:     {desde: "2023-11", hasta: "2026-09"}   # se usa una sola vez, al final
+reajuste_meses: 12                     # los modelos se reentrenan cada 12 orígenes
+
+# Variables exógenas, con el rezago con que realmente se conocen en el origen t.
+exogenas:
+  oni_rezago: 2                        # ONI centrado en t-2: la temporada que termina en t-1 se publica en t
+  oni_rezago_sarimax: 5                # SARIMAX necesita la exógena futura: con 5 meses, t+3 sigue siendo conocida
+  abastecimiento_rezago: 1             # toneladas a Corabastos del mes t-1 (se publican a mediados de t)
+
+sarimax:
+  orden: [1, 1, 1]
+  orden_estacional: [0, 1, 1, 12]
+
+lightgbm:
+  n_estimators: 300
+  learning_rate: 0.05
+  num_leaves: 15
+  min_child_samples: 40
+  subsample: 0.8
+  subsample_freq: 1
+  colsample_bytree: 0.8
+
+nbeats:                                # experimental (D-021): se despliega solo si gana
+  ventana: 24
+  bloques: 4
+  ancho: 128
+  capas: 3
+  pasos: 1500
+  lote: 256
+  tasa_aprendizaje: 0.001
+
+# Regla de despliegue (fijada antes de mirar la prueba, 11-nov-2026): en cada horizonte se
+# despliega el modelo de menor pérdida de cuantiles en validación SOLO si mejora a la mejor
+# línea base con IC 90 % > 0 (bootstrap de orígenes completos). Si no, se usa la línea base.
+bootstrap_repeticiones: 2000

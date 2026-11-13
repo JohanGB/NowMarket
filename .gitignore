@@ -1,0 +1,40 @@
+# --- Datos crudos: no se versionan (licencia DANE y tamaño). Sí el manifiesto y el LEEME. ---
+data/raw/**
+!data/raw/
+!data/raw/LEEME.md
+!data/manifest.json
+data/interim/
+data/processed/
+# Derivados: se regeneran con `python -m mercado_al_dia` (y contienen datos DANE).
+data/procesado/
+*.part
+.manifest.*.tmp
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# --- Entornos ---
+.venv/
+venv/
+env/
+.env
+
+# --- Cuadernos y editores ---
+.ipynb_checkpoints/
+.vscode/
+.idea/
+
+# --- Sistema operativo ---
+Thumbs.db
+desktop.ini
+.DS_Store
+~$*.xlsx

@@ -1,0 +1,17 @@
+# Sustitutos en la cocina (criterio de uso, no estadístico). Editable por el autor.
+# Solo se comparan productos con la misma unidad de precio.
+grupos:
+  - ["Papa parda pastusa", "Papa sabanera", "Papa única", "Papa superior"]
+  - ["Tomate chonto", "Tomate larga vida"]
+  - ["Cebolla cabezona blanca", "Cebolla cabezona roja"]
+  - ["Plátano hartón verde", "Plátano hartón verde llanero", "Plátano guineo"]
+  - ["Banano criollo", "Banano Urabá"]
+  - ["Naranja Valencia", "Naranja Sweet", "Tangelo"]
+  - ["Fríjol cargamanto rojo", "Fríjol bolón"]
+  - ["Lenteja importada", "Arveja verde seca importada"]
+  - ["Queso campesino", "Queso cuajada", "Queso costeño"]
+  - ["Aguacate papelillo", "Aguacate Hass"]
+  - ["Arroz de primera", "Arroz de segunda"]
+  - ["Mora de Castilla", "Fresa", "Tomate de árbol"]
+  - ["Yuca llanera", "Arracacha amarilla"]
+  - ["Zanahoria", "Remolacha", "Ahuyama"]

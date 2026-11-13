@@ -1,0 +1,149 @@
+{
+  "actualizado_utc": "2026-11-11T19:07:40Z",
+  "archivos": {
+    "exogenas/noaa_oni.ascii.txt": {
+      "bytes": 23050,
+      "destino": "exogenas/noaa_oni.ascii.txt",
+      "fecha_descarga_utc": "2026-11-11T19:07:40Z",
+      "id": "noaa_oni",
+      "origen": "descarga",
+      "pagina_origen": "https://www.cpc.ncep.noaa.gov/data/indices/",
+      "sha256": "118c563331335c8649cdc2677e6be7ae89d1259d901345fcddbc2857af280f7f",
+      "tipo": "txt",
+      "url": "https://www.cpc.ncep.noaa.gov/data/indices/oni.ascii.txt"
+    },
+    "sipsa/abastecimiento/sipsa_a_series_historicas_2013_2026.xlsx": {
+      "bytes": 881635,
+      "destino": "sipsa/abastecimiento/sipsa_a_series_historicas_2013_2026.xlsx",
+      "fecha_descarga_utc": "2026-11-11T19:07:38Z",
+      "id": "sipsa_a_series_2013_2026",
+      "origen": "descarga",
+      "pagina_origen": "https://www.dane.gov.co/index.php/estadisticas-por-tema/agropecuario/sistema-de-informacion-de-precios-sipsa/componente-abastecimientos-1",
+      "sha256": "6893be7fcbd72780da92bda321c9a522f958c18c6de4989dc2ce38136649935e",
+      "tipo": "xlsx",
+      "url": "https://www.dane.gov.co/files/operaciones/SIPSA/Series-historicas-abastecimiento-2013-2026.xlsx"
+    },
+    "sipsa/precios_mensual/sipsa_p_serie_mensual_2013_2017.xlsx": {
+      "bytes": 7871544,
+      "destino": "sipsa/precios_mensual/sipsa_p_serie_mensual_2013_2017.xlsx",
+      "fecha_descarga_utc": "2026-11-11T19:07:34Z",
+      "id": "sipsa_p_mensual_2013_2017",
+      "origen": "descarga",
+      "pagina_origen": "https://www.dane.gov.co/index.php/estadisticas-por-tema/agropecuario/sistema-de-informacion-de-precios-sipsa/mayoristas-boletin-mensual-1",
+      "sha256": "52ab7e972de70a95c7bab886fad6d77b61b0abb70814abd1088ccd474b0002a5",
+      "tipo": "xlsx",
+      "url": "https://www.dane.gov.co/files/investigaciones/agropecuario/sipsa/series-historicas/series-historicas-precios-mayoristas.xlsx"
+    },
+    "sipsa/precios_mensual/sipsa_p_serie_mensual_2018.xlsx": {
+      "bytes": 1665906,
+      "destino": "sipsa/precios_mensual/sipsa_p_serie_mensual_2018.xlsx",
+      "fecha_descarga_utc": "2026-11-11T19:07:34Z",
+      "id": "sipsa_p_mensual_2018",
+      "origen": "descarga",
+      "pagina_origen": "https://www.dane.gov.co/index.php/estadisticas-por-tema/agropecuario/sistema-de-informacion-de-precios-sipsa/mayoristas-boletin-mensual-1",
+      "sha256": "fb6d5349f80f42305261160bf6beb906d07af4f429b5f68c3247c69aaa162d12",
+      "tipo": "xlsx",
+      "url": "https://www.dane.gov.co/files/investigaciones/agropecuario/sipsa/series-historicas/series-historicas-precios-mayoristas-2018.xlsx"
+    },
+    "sipsa/precios_mensual/sipsa_p_serie_mensual_2019.xlsx": {
+      "bytes": 1902793,
+      "destino": "sipsa/precios_mensual/sipsa_p_serie_mensual_2019.xlsx",
+      "fecha_descarga_utc": "2026-11-11T19:07:35Z",
+      "id": "sipsa_p_mensual_2019",
+      "origen": "descarga",
+      "pagina_origen": "https://www.dane.gov.co/index.php/estadisticas-por-tema/agropecuario/sistema-de-informacion-de-precios-sipsa/mayoristas-boletin-mensual-1",
+      "sha256": "b6a22e980e7911f9ca741e2a1e7ba2f53ce6775085a293052ef89f532e70832d",
+      "tipo": "xlsx",
+      "url": "https://www.dane.gov.co/files/investigaciones/agropecuario/sipsa/series-historicas/series-historicas-precios-mayoristas-2019.xlsx"
+    },
+    "sipsa/precios_mensual/sipsa_p_serie_mensual_2020.xlsx": {
+      "bytes": 1953147,
+      "destino": "sipsa/precios_mensual/sipsa_p_serie_mensual_2020.xlsx",
+      "fecha_descarga_utc": "2026-11-11T19:07:35Z",
+      "id": "sipsa_p_mensual_2020",
+      "origen": "descarga",
+      "pagina_origen": "https://www.dane.gov.co/index.php/estadisticas-por-tema/agropecuario/sistema-de-informacion-de-precios-sipsa/mayoristas-boletin-mensual-1",
+      "sha256": "53e6de3b4c5308b2fc1bd135b39871531ff40a636e2f4c7fc5bcffcf57e65fbc",
+      "tipo": "xlsx",
+      "url": "https://www.dane.gov.co/files/investigaciones/agropecuario/sipsa/series-historicas/series-historicas-precios-mayoristas-2020.xlsx"
+    },
+    "sipsa/precios_mensual/sipsa_p_serie_mensual_2021.xlsx": {
+      "bytes": 1891107,
+      "destino": "sipsa/precios_mensual/sipsa_p_serie_mensual_2021.xlsx",
+      "fecha_descarga_utc": "2026-11-11T19:07:36Z",
+      "id": "sipsa_p_mensual_2021",
+      "origen": "descarga",
+      "pagina_origen": "https://www.dane.gov.co/index.php/estadisticas-por-tema/agropecuario/sistema-de-informacion-de-precios-sipsa/mayoristas-boletin-mensual-1",
+      "sha256": "4a460f246bacc4ffc86c235dbef0a043c9ee3b2a7e43ceb0ef3373cab7d2fa09",
+      "tipo": "xlsx",
+      "url": "https://www.dane.gov.co/files/investigaciones/agropecuario/sipsa/series-historicas/series-historicas-precios-mayoristas-2021.xlsx"
+    },
+    "sipsa/precios_mensual/sipsa_p_serie_mensual_2022.xlsx": {
+      "bytes": 1600719,
+      "destino": "sipsa/precios_mensual/sipsa_p_serie_mensual_2022.xlsx",
+      "fecha_descarga_utc": "2026-11-11T19:07:36Z",
+      "id": "sipsa_p_mensual_2022",
+      "origen": "descarga",
+      "pagina_origen": "https://www.dane.gov.co/index.php/estadisticas-por-tema/agropecuario/sistema-de-informacion-de-precios-sipsa/mayoristas-boletin-mensual-1",
+      "sha256": "1e299bc44280121eb79d0de4678a1888e92f1aaa1d6195027da69c3d55f47110",
+      "tipo": "xlsx",
+      "url": "https://www.dane.gov.co/files/investigaciones/agropecuario/sipsa/series-historicas/series-historicas-precios-mayoristas-2022.xlsx"
+    },
+    "sipsa/precios_mensual/sipsa_p_serie_mensual_2023.xlsx": {
+      "bytes": 1755768,
+      "destino": "sipsa/precios_mensual/sipsa_p_serie_mensual_2023.xlsx",
+      "fecha_descarga_utc": "2026-11-11T19:07:36Z",
+      "id": "sipsa_p_mensual_2023",
+      "origen": "descarga",
+      "pagina_origen": "https://www.dane.gov.co/index.php/estadisticas-por-tema/agropecuario/sistema-de-informacion-de-precios-sipsa/mayoristas-boletin-mensual-1",
+      "sha256": "15230ac8d4046644016770db4d885f49bc76a429673a5369bb014d4b4476c78e",
+      "tipo": "xlsx",
+      "url": "https://www.dane.gov.co/files/operaciones/SIPSA/anex-SIPSA-SerieHistoricaMayorista-Dic2023.xlsx"
+    },
+    "sipsa/precios_mensual/sipsa_p_serie_mensual_2024.xlsx": {
+      "bytes": 1656271,
+      "destino": "sipsa/precios_mensual/sipsa_p_serie_mensual_2024.xlsx",
+      "fecha_descarga_utc": "2026-11-11T19:07:37Z",
+      "id": "sipsa_p_mensual_2024",
+      "origen": "descarga",
+      "pagina_origen": "https://www.dane.gov.co/index.php/estadisticas-por-tema/agropecuario/sistema-de-informacion-de-precios-sipsa/mayoristas-boletin-mensual-1",
+      "sha256": "081276b031fd517cf137c0c2e5ab1ff6364b7c5d40915dfccf0f4cb972087838",
+      "tipo": "xlsx",
+      "url": "https://www.dane.gov.co/files/operaciones/SIPSA/anex-SIPSA-SerieHistoricaMayorista-2024.xlsx"
+    },
+    "sipsa/precios_mensual/sipsa_p_serie_mensual_2025.xlsx": {
+      "bytes": 1778462,
+      "destino": "sipsa/precios_mensual/sipsa_p_serie_mensual_2025.xlsx",
+      "fecha_descarga_utc": "2026-11-11T19:07:37Z",
+      "id": "sipsa_p_mensual_2025",
+      "origen": "descarga",
+      "pagina_origen": "https://www.dane.gov.co/index.php/estadisticas-por-tema/agropecuario/sistema-de-informacion-de-precios-sipsa/mayoristas-boletin-mensual-1",
+      "sha256": "235a93317d9845fd6ce31c5060e9fabc478dd7686e5dd3a3833c674eef7c4c8a",
+      "tipo": "xlsx",
+      "url": "https://www.dane.gov.co/files/operaciones/SIPSA/anex-SIPSA-SerieHistoricaMayorista-2025.xlsx"
+    },
+    "sipsa/precios_mensual/sipsa_p_serie_mensual_2026.xlsx": {
+      "bytes": 2590851,
+      "destino": "sipsa/precios_mensual/sipsa_p_serie_mensual_2026.xlsx",
+      "fecha_descarga_utc": "2026-11-11T19:07:38Z",
+      "id": "sipsa_p_mensual_2026",
+      "origen": "descarga",
+      "pagina_origen": "https://www.dane.gov.co/index.php/estadisticas-por-tema/agropecuario/sistema-de-informacion-de-precios-sipsa/mayoristas-boletin-mensual-1",
+      "sha256": "c72e98c39a4c3be3b4ceef83b2c9bb9df994d99bd9468e387547cc211a4a2863",
+      "tipo": "xlsx",
+      "url": "https://www.dane.gov.co/files/operaciones/SIPSA/anex-SIPSA-SerieHistoricaMayorista-2026.xlsx"
+    },
+    "sipsa/precios_semanal/sipsa_p_semanal_2026-10-31_2026-11-06.xlsx": {
+      "bytes": 278164,
+      "destino": "sipsa/precios_semanal/sipsa_p_semanal_2026-10-31_2026-11-06.xlsx",
+      "fecha_descarga_utc": "2026-11-11T19:07:38Z",
+      "id": "sipsa_p_semanal_muestra_2026w44",
+      "origen": "descarga",
+      "pagina_origen": "https://www.dane.gov.co/index.php/estadisticas-por-tema/agropecuario/sistema-de-informacion-de-precios-sipsa/mayoristas-boletin-semanal-1",
+      "sha256": "662080fa4b51e374497320b35279d49946e381a9af8ff5608f1d8f65da0c0bbf",
+      "tipo": "xlsx",
+      "url": "https://www.dane.gov.co/files/operaciones/SIPSA/anex-SIPSASemanal-31oct06nov-2026.xlsx"
+    }
+  },
+  "version": 1
+}

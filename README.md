@@ -2,7 +2,7 @@
 
 **Español** · [English](README.en.md)
 
-![pruebas](https://github.com/JohanGB/mercado-al-dia/actions/workflows/pruebas.yml/badge.svg) ![Python](https://img.shields.io/badge/python-3.10%2B-3776AB) ![Licencia](https://img.shields.io/badge/licencia-MIT-green)
+![pruebas](https://github.com/JohanGB/NowMarket/actions/workflows/pruebas.yml/badge.svg) ![Python](https://img.shields.io/badge/python-3.10%2B-3776AB) ![Licencia](https://img.shields.io/badge/licencia-MIT-green)
 
 **¿Qué está barato este mes en la plaza, cuánto costará el próximo y qué conviene esperar?**
 Mercado al Día responde con los precios mayoristas del **SIPSA** (Sistema de Información de Precios y

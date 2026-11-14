@@ -1,6 +1,8 @@
 # Mercado al Día
 
-[Español](README.md) · **English**
+[Español](README.md) · **English** · [Portfolio page](https://johangb.github.io/en/projects/mercado-al-dia.html)
+
+![tests](https://github.com/JohanGB/NowMarket/actions/workflows/pruebas.yml/badge.svg) ![Python](https://img.shields.io/badge/python-3.10%2B-3776AB) ![License](https://img.shields.io/badge/license-MIT-green)
 
 **What is cheap this month at the market, how much will it cost next month, and what is worth
 waiting for?** Mercado al Día answers using wholesale prices from **SIPSA** (DANE's agricultural
@@ -9,6 +11,8 @@ price and supply information system) for Bogotá and the Savannah, with Corabast
 > **Status: v1.0, phases 0–3 complete.** Verified data, a useful dashboard without ML, models
 > validated with rolling origin and a single held-out test, and a published page
 > ([demo](docs/demo/mercado.html)). Not financial advice.
+
+![Mercado al Día published page with this month's prices](docs/img/pagina-publicada.webp)
 
 ## What it does
 

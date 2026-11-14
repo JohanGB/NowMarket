@@ -1,6 +1,6 @@
 # Mercado al Día
 
-**Español** · [English](README.en.md)
+**Español** · [English](README.en.md) · [Ficha en el portafolio](https://johangb.github.io/proyectos/mercado-al-dia.html)
 
 ![pruebas](https://github.com/JohanGB/NowMarket/actions/workflows/pruebas.yml/badge.svg) ![Python](https://img.shields.io/badge/python-3.10%2B-3776AB) ![Licencia](https://img.shields.io/badge/licencia-MIT-green)
 
@@ -11,6 +11,8 @@ Abastecimiento del Sector Agropecuario, del DANE) para Bogotá y la Sabana, con 
 > **Estado: v1.0, fases 0 a 3 terminadas (11-nov-2026).** Datos verificados, tablero útil sin aprendizaje
 > automático, modelos validados con origen rodante y una prueba única, y página publicada.
 > No es asesoría financiera.
+
+![Página publicada de Mercado al Día con los precios del mes](docs/img/pagina-publicada.webp)
 
 ## Qué hace
 

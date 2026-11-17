@@ -1,6 +1,6 @@
 # NowMarket — precios mayoristas mensuales del SIPSA para Bogotá y la Sabana; no son precios al instante ni de tienda
 
-[Ficha en el portafolio](https://johangb.github.io/proyectos/mercado-al-dia.html)
+**Español** · [English](README.en.md) · [Ficha en el portafolio](https://johangb.github.io/proyectos/mercado-al-dia.html)
 
 ![pruebas](https://github.com/JohanGB/NowMarket/actions/workflows/pruebas.yml/badge.svg) ![Python](https://img.shields.io/badge/python-3.10%2B-3776AB) ![Licencia](https://img.shields.io/badge/licencia-MIT-green)
 
@@ -15,6 +15,8 @@ Abastecimiento del Sector Agropecuario, del DANE) para Bogotá y la Sabana, con 
 >
 > El repositorio de GitHub es **NowMarket**; el paquete de Python se llama **`mercado_al_dia`** (los comandos, imports y
 > rutas de este documento usan ese nombre y no cambian). El proyecto se llamó antes «Mercado al Día».
+
+![Página publicada de NowMarket con los precios del mes](docs/img/pagina-publicada.webp)
 
 ## Qué hace
 
@@ -83,8 +85,11 @@ python -m venv .venv
 pip install -e .[dev]
 python -m mercado_al_dia.ingesta.descargar # baja los datos públicos y los registra con SHA-256
 python -m mercado_al_dia                   # tablero, minería y pronóstico (unos 40 s)
-python -m pytest -q                        # 72 pruebas sin internet (71 pasan y 1 es un fallo esperado documentado); pip install -e .[dev,dl] para no omitir N-BEATS
+python -m pytest -q                        # 72 pruebas sin internet (ver nota); pip install -e .[dev,dl] para no omitir N-BEATS
 ```
+
+**Pruebas.** Son 72. Con JAX instalado (`.[dev,dl]`): 71 pasan y 1 es un fallo esperado documentado (`xfail`). Sin JAX se omiten
+las 3 pruebas de N-BEATS (`could not import 'jax'`). En la CI, Linux instala JAX (71 pasan) y Windows no (68 pasan y 3 omitidas).
 
 **`data/raw/` y `data/procesado/` no vienen en el repositorio** (no se versionan: licencia del DANE y tamaño;
 D-006 y D-017). Se crean al ejecutar: `python -m mercado_al_dia.ingesta.descargar` baja los crudos a

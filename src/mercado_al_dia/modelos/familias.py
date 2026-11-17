@@ -22,7 +22,7 @@ import numpy as np
 import pandas as pd
 
 from .. import analisis
-from .datos import Datos
+from .datos import Datos, productos_entrenamiento
 
 COLS = ["q10", "q50", "q90"]
 
@@ -171,9 +171,14 @@ class Sarimax(_Base):
 
 # ------------------------------------------------------------------ LightGBM global
 
-def caracteristicas(datos: Datos, h: int, cfg: dict) -> pd.DataFrame:
-    """Tabla larga (mes, pid) con variables conocidas en el origen y el objetivo y = log p(t+h) − log p(t)."""
-    L = datos.logp[datos.entrenamiento]
+def caracteristicas(datos: Datos, h: int, cfg: dict, productos: list[str] | None = None) -> pd.DataFrame:
+    """Tabla larga (mes, pid) con variables conocidas en el origen y el objetivo y = log p(t+h) − log p(t).
+
+    ``productos``: columnas de la tabla (por defecto, los candidatos de ``datos.entrenamiento``). Las
+    variables de cada producto solo dependen de su propia serie; el código de grupo, de los grupos presentes.
+    """
+    productos = list(datos.entrenamiento if productos is None else productos)
+    L = datos.logp[productos]
     dif = L.diff()
     partes = {
         "r1": L - L.shift(1), "r3": L - L.shift(3), "r6": L - L.shift(6), "r12": L - L.shift(12),
@@ -195,8 +200,8 @@ def caracteristicas(datos: Datos, h: int, cfg: dict) -> pd.DataFrame:
     largo["abast_anual"] = a.reindex(meses - ra).to_numpy() - a.reindex(meses - ra - 12).to_numpy()
     largo["mes_objetivo"] = ((meses.month - 1 + h) % 12).astype(int)
     largo["mes_origen"] = (meses.month - 1).astype(int)
-    grupos = sorted(set(datos.grupos[p] for p in datos.entrenamiento))
-    largo["grupo"] = largo["pid"].map({p: grupos.index(datos.grupos[p]) for p in datos.entrenamiento})
+    grupos = sorted(set(datos.grupos[p] for p in productos))
+    largo["grupo"] = largo["pid"].map({p: grupos.index(datos.grupos[p]) for p in productos})
     largo = largo[L.stack(future_stack=True).notna().to_numpy()]          # el precio del origen existe
     return largo
 
@@ -213,19 +218,28 @@ class LightGBMGlobal(_Base):
         super().__init__(cfg)
         self.tablas = {}
         self.modelos = {}
+        self.productos: list[str] = []                 # productos de entrenamiento del último ajuste
+        self.productos_por_ajuste: dict[str, int] = {}
 
     def _tabla(self, datos, h):
         if h not in self.tablas:
-            self.tablas[h] = caracteristicas(datos, h, self.cfg)
+            columnas = sorted(set(self.productos) | set(datos.evaluacion))
+            self.tablas[h] = caracteristicas(datos, h, self.cfg, columnas)
         return self.tablas[h]
 
     def ajustar(self, datos, hasta):
         import lightgbm as lgb
 
+        # Lista elegida solo con precios hasta `hasta` (corrección (a) de la auditoría).
+        productos = productos_entrenamiento(datos.logp, hasta, int(self.cfg["meses_minimos_entrenamiento"]),
+                                            datos.entrenamiento)
+        if productos != self.productos:
+            self.productos, self.tablas = productos, {}
+        self.productos_por_ajuste[str(hasta)] = len(productos)
         self.modelos.clear()
         for h in self.h:
             t = self._tabla(datos, h)
-            ok = (t["mes"] + h <= hasta) & t["y"].notna()             # objetivo observado hasta `hasta`
+            ok = (t["mes"] + h <= hasta) & t["y"].notna() & t["pid"].isin(productos)   # objetivo observado hasta `hasta`
             X, y = t.loc[ok, VARIABLES], t.loc[ok, "y"]
             for tau in self.tau:
                 m = lgb.LGBMRegressor(objective="quantile", alpha=tau, random_state=int(self.cfg["semilla"]),

@@ -125,6 +125,7 @@ def ejecutar(raiz: Path, decir=print) -> dict:
         "precios_guardados": len(precios), "productos_referencia": len(ref), "productos_en_tablero": len(indicadores),
         "duplicados_identicos": calidad.duplicados_identicos, "duplicados_en_conflicto": calidad.duplicados_en_conflicto,
         "equivalencias_aplicadas": calidad.equivalencias_aplicadas, "saltos_extremos": calidad.saltos_extremos,
+        "saltos_con_hueco": calidad.saltos_con_hueco, "datos_sospechosos": calidad.datos_sospechosos,
         "incidencias": calidad.incidencias,
         "estados": {e: sum(1 for i in indicadores if i.estado == e) for e in ("barato", "normal", "caro", "sin_referencia")},
         "validacion_estacional": {"evaluados": validacion.evaluados, "aciertos": validacion.aciertos,
@@ -196,7 +197,9 @@ def fase2(raiz: Path, cfg_an: dict, decir=print) -> dict:
                               "corto": {"lightgbm": "LightGBM", "ingenuo": "Ingenuo calibrado"}.get(r["modelo"], r["modelo"]),
                               "mae_pct": r["mae_pct"], "cobertura": r["cobertura"]} for r in sorted(filas, key=lambda r: r["h"])]
         desde, hasta = cfg_m["prueba"]["desde"], cfg_m["prueba"]["hasta"]
-        modelos["nota"] = (f"Medido una sola vez en la prueba ({desde} a {hasta}), con los 18 productos de la canasta. "
+        veces = ("Medido en la prueba ({d} a {h}; se repitió una vez por corrección de método, D-030)" if p.prueba.get("forzada")
+                 else "Medido una sola vez en la prueba ({d} a {h})").format(d=desde, h=hasta)
+        modelos["nota"] = (f"{veces}, con los 18 productos de la canasta. "
                            "A: meses hacia adelante. Error típico: diferencia media entre lo más probable y el precio real, en % del precio. "
                            "Cubrió: veces que el precio real cayó dentro del rango (la meta es 80 %). Ingenuo calibrado: "
                            "el precio se mantiene, con un rango medido en los errores pasados.")

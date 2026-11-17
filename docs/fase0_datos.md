@@ -1,6 +1,6 @@
 # Fase 0: viabilidad de datos
 
-**Proyecto:** Mercado al Día
+**Proyecto:** NowMarket (antes «Mercado al Día»)
 **Fecha de la revisión:** 11 de noviembre de 2026
 **Alcance:** comprobar qué datos públicos y gratuitos existen para pronosticar precios mayoristas de alimentos en Bogotá (Corabastos), Paloquemao y Madrid (Cundinamarca). Esta fase no incluye modelos.
 

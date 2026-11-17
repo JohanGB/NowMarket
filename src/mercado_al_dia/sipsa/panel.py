@@ -9,6 +9,9 @@ Reglas (todas configurables en ``config/productos.yaml``):
 - Duplicados (mismo mes, mercado y producto): si el precio es igual se deja uno; si es
   distinto no se elige ninguno al azar: se descartan ambos y se reporta.
 - Saltos extremos de un mes a otro (×3 o ÷3) se reportan pero no se corrigen.
+- Saltos ×3 entre observaciones separadas por un hueco (`saltos_con_hueco`) y datos aislados que difieren
+  ×10 de su dato anterior y de su siguiente en sentidos opuestos (`datos_sospechosos`): solo se reportan;
+  el panel no cambia (hallazgo 7 de la auditoría independiente).
 """
 from __future__ import annotations
 
@@ -20,6 +23,7 @@ from dataclasses import dataclass, field
 from .lector import Registro, plano
 
 SALTO_EXTREMO = 3.0
+SALTO_SOSPECHOSO = 10.0     # dato aislado: ×10 frente al anterior y al siguiente, en sentidos opuestos
 
 
 @dataclass
@@ -47,6 +51,8 @@ class Calidad:
     duplicados_en_conflicto: list[dict] = field(default_factory=list)
     equivalencias_aplicadas: dict[str, int] = field(default_factory=dict)
     saltos_extremos: list[dict] = field(default_factory=list)
+    saltos_con_hueco: list[dict] = field(default_factory=list)
+    datos_sospechosos: list[dict] = field(default_factory=list)
     incidencias: list[dict] = field(default_factory=list)
 
 
@@ -135,9 +141,36 @@ def construir(registros, catalogo: Catalogo, incidencias=None) -> tuple[list[Pre
                                             "hasta": p.fecha.isoformat(), "precio_antes": q.precio,
                                             "precio_despues": p.precio, "origen": f"{p.archivo}#{p.hoja}!{p.fila}"})
         previo[clave] = p
+    _reportar_huecos_y_sospechosos(precios, cal)
     if incidencias:
         cal.incidencias = [vars(i) for i in incidencias]
     return precios, cal
+
+
+def _reportar_huecos_y_sospechosos(precios: list[Precio], cal: Calidad) -> None:
+    """Solo reporta; no modifica ni borra ningún precio. ``precios`` viene ordenado por fecha."""
+    series: dict[tuple, list[Precio]] = collections.defaultdict(list)
+    for p in precios:
+        series[(p.mercado_id, p.producto_id)].append(p)
+    for lista in series.values():
+        for q, p in zip(lista, lista[1:]):
+            hueco = _meses(q.fecha, p.fecha) - 1
+            razon = p.precio / q.precio
+            if hueco > 0 and (razon >= SALTO_EXTREMO or razon <= 1 / SALTO_EXTREMO):
+                cal.saltos_con_hueco.append({
+                    "mercado": p.mercado, "producto": p.producto, "desde": q.fecha.isoformat(), "hasta": p.fecha.isoformat(),
+                    "meses_de_hueco": hueco, "precio_antes": q.precio, "precio_despues": p.precio,
+                    "origen": f"{p.archivo}#{p.hoja}!{p.fila}"})
+        for a, b, c in zip(lista, lista[1:], lista[2:]):
+            antes, despues = b.precio / a.precio, c.precio / b.precio
+            if (antes <= 1 / SALTO_SOSPECHOSO and despues >= SALTO_SOSPECHOSO) or                (antes >= SALTO_SOSPECHOSO and despues <= 1 / SALTO_SOSPECHOSO):
+                cal.datos_sospechosos.append({
+                    "mercado": b.mercado, "producto": b.producto, "fecha": b.fecha.isoformat(), "precio": b.precio,
+                    "precio_anterior": a.precio, "precio_siguiente": c.precio,
+                    "razon_anterior": antes, "razon_siguiente": despues,
+                    "origen": f"{b.archivo}#{b.hoja}!{b.fila}",
+                    "motivo": f"el precio difiere ×{max(antes, 1 / antes):.0f} del dato anterior y ×{max(despues, 1 / despues):.0f} "
+                              "del siguiente, en sentidos opuestos; posible error de la fuente o de unidad. Se conserva sin cambios."})
 
 
 def _con_tildes(variantes: collections.Counter) -> str:

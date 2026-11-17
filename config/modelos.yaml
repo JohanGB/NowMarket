@@ -7,7 +7,9 @@ cobertura_objetivo: 0.80
 # Productos que se evalúan y se reportan (D-019: los 18 de la canasta).
 productos_evaluacion: canasta          # "canasta" = los de config/canasta.yaml
 # Los modelos globales (LightGBM, N-BEATS) se entrenan con todos los productos de Corabastos
-# que tengan al menos esta historia; ganan datos sin mirar el futuro.
+# que tengan al menos esta historia CONTADA HASTA CADA ORIGEN; ganan datos sin mirar el futuro.
+# Como el panel empieza en 2013-01, antes de 2022-12 nadie llega a 120: el mínimo se topa en los
+# meses transcurridos, min(120, meses transcurridos) (D-030, corrección (a) de la auditoría).
 meses_minimos_entrenamiento: 120
 
 # Origen rodante. Un origen t usa solo precios hasta t (publicados a comienzos de t+1).
@@ -47,3 +49,9 @@ nbeats:                                # experimental (D-021): se despliega solo
 # despliega el modelo de menor pérdida de cuantiles en validación SOLO si mejora a la mejor
 # línea base con IC 90 % > 0 (bootstrap de orígenes completos). Si no, se usa la línea base.
 bootstrap_repeticiones: 2000
+# Bloques circulares de orígenes consecutivos (D-024, D-030). docs/modelos.md exige bloques de al
+# menos h meses; con horizontes hasta 3, un solo valor fijo de 3 cumple en todos. Fijado el
+# 17-nov-2026 por esa regla, no por resultados. b = h y b = 6 se reportan solo como sensibilidad
+# descriptiva: no cambian la decisión.
+bootstrap_bloque: 3
+bootstrap_bloques_sensibilidad: [h, 6]

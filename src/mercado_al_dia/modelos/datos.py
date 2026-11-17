@@ -28,11 +28,27 @@ class Datos:
     oni: pd.Series                # anomalía ONI por mes central (Period[M])
     abastecimiento: pd.Series     # log toneladas Corabastos por mes (Period[M])
     evaluacion: list[str]         # productos que se reportan
-    entrenamiento: list[str]      # productos para modelos globales
+    entrenamiento: list[str]      # candidatos para modelos globales; la lista real se elige en cada
+                                  # origen con productos_entrenamiento() (solo datos hasta el origen)
 
     @property
     def ultimo(self) -> pd.Period:
         return self.logp.index.max()
+
+
+def productos_entrenamiento(logp: pd.DataFrame, hasta: pd.Period, minimo: int,
+                            candidatos: list[str] | None = None) -> list[str]:
+    """Productos con al menos ``min(minimo, meses transcurridos)`` meses con precio hasta ``hasta``.
+
+    Corrección (a) de la auditoría (17-nov-2026): antes se contaban los meses de toda la muestra, lo que
+    usaba datos posteriores al origen. Contados solo hasta el origen, ningún producto llega a 120 meses
+    antes de 2022-12; por eso el mínimo se topa en los meses transcurridos desde el inicio del panel
+    (decisión del autor, D-030): en los orígenes tempranos se exige la historia completa.
+    """
+    hist = logp.loc[:hasta]
+    exigidos = min(int(minimo), len(hist))
+    cols = hist.columns if candidatos is None else [c for c in hist.columns if c in set(candidatos)]
+    return [p for p in cols if hist[p].notna().sum() >= exigidos]
 
 
 def leer_oni(ruta: Path) -> pd.Series:
@@ -91,8 +107,7 @@ def cargar(raiz: Path, cfg: dict) -> Datos:
     faltan = [p for p in evaluacion if p not in logp.columns]
     if faltan:
         raise ValueError(f"Productos de evaluación sin datos: {faltan}")
-    minimo = int(cfg.get("meses_minimos_entrenamiento", 120))
-    entrenamiento = [p for p in logp.columns if logp[p].notna().sum() >= minimo]
+    entrenamiento = list(logp.columns)     # candidatos: cada modelo global filtra hasta su origen
 
     exo = raiz / "data" / "raw"
     oni = leer_oni(exo / "exogenas" / "noaa_oni.ascii.txt")

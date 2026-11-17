@@ -1,14 +1,35 @@
 name: pruebas
-on: [push, pull_request, workflow_dispatch]
-jobs:
-  test:
-    runs-on: ubuntu-latest
 
+on:
+  push:
+  pull_request:
+
+jobs:
+  pytest:
+    name: pytest (${{ matrix.os }}, Python ${{ matrix.python }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python: ["3.11", "3.12"]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: ${{ matrix.python }}
+          cache: pip
+          cache-dependency-path: pyproject.toml
 
-      - run: python -m pip install --upgrade pip && pip install -e ".[dev]"
-      - run: python -m pytest -q
+      - name: Instalar (extra [dev])
+        run: python -m pip install -e ".[dev]"
+
+      # N-BEATS necesita JAX (extra [dl]), que aquí solo se instala en Linux. En Windows no se instala y las
+      # 3 pruebas de N-BEATS (test_fase2 y test_auditoria) se omiten con el motivo explícito
+      # "could not import 'jax'" (pytest.importorskip); -rs lo imprime en el registro.
+      - name: Instalar JAX (extra [dl], solo Linux)
+        if: runner.os == 'Linux'
+        run: python -m pip install -e ".[dl]"
+
+      - name: Pruebas
+        run: python -m pytest -q -rs

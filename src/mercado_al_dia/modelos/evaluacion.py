@@ -6,9 +6,10 @@ Protocolo (config/modelos.yaml):
    conservan pronósticos cuyo mes objetivo cae dentro de la validación.
 2. Calibración conformal (CQR, Romano et al. 2019): con los errores de validación se calcula,
    por familia y horizonte, cuánto ensanchar el intervalo 10–90 para cubrir el 80 %.
-3. Selección: por horizonte gana la familia con menor pérdida de cuantiles en validación,
-   siempre que supere a la mejor línea base con una mejora cuyo IC 90 % (bootstrap de
-   orígenes) quede por encima de cero; si ninguna lo logra, se despliega la mejor línea base.
+3. Selección: por horizonte se toma la familia con menor pérdida de cuantiles en validación y
+   se despliega solo si supera a la mejor línea base con una mejora cuyo IC 90 % (bootstrap de
+   bloques circulares de orígenes, bloque fijo en la configuración) quede por encima de cero;
+   si no, se despliega la mejor línea base.
 4. Prueba (2023-11 a 2026-09): se ejecuta una sola vez, después de fijar 1–3, y se reporta.
 """
 from __future__ import annotations
@@ -50,13 +51,18 @@ def rodar(modelo, datos: Datos, orig: pd.PeriodIndex, productos: list[str], reaj
 
 
 def cqr(pred: pd.DataFrame, cobertura: float) -> dict[int, float]:
-    """Ensanche por horizonte (en log) para que el intervalo 10–90 cubra `cobertura` (CQR)."""
+    """Ensanche por horizonte (en log) para que el intervalo 10–90 cubra `cobertura` (CQR).
+
+    Romano et al. (2019): el ajuste es el elemento k = ⌈(n+1)·cobertura⌉ de los errores ordenados de menor
+    a mayor. Corrección (b) de la auditoría: antes se tomaba el elemento k+1. Si k > n (muy pocos casos) el
+    ajuste teórico es infinito; se usa el error máximo (con n ≥ 4 casos y cobertura 0,8 no ocurre).
+    """
     salida = {}
     for h, g in pred.groupby("h"):
-        e = np.maximum(g["q10"] - g["y"], g["y"] - g["q90"]).to_numpy()
+        e = np.sort(np.maximum(g["q10"] - g["y"], g["y"] - g["q90"]).to_numpy())
         n = len(e)
-        nivel = min(1.0, math.ceil((n + 1) * cobertura) / n)
-        salida[int(h)] = float(np.quantile(e, nivel, method="higher"))
+        k = math.ceil((n + 1) * cobertura)
+        salida[int(h)] = float(e[min(k, n) - 1])
     return salida
 
 
@@ -75,26 +81,41 @@ def tabla_metricas(pred: pd.DataFrame, cfg: dict, escala: dict) -> pd.DataFrame:
 
 
 def seleccionar(tabla: pd.DataFrame, pred: pd.DataFrame, lineas_base: list[str], cfg: dict) -> dict[int, dict]:
-    """Por horizonte: la familia de menor pérdida que mejore de forma significativa a la mejor línea base."""
+    """Regla de despliegue tal como está escrita en config/modelos.yaml (corrección (c) de la auditoría).
+
+    Por horizonte se toma el modelo de MENOR pérdida de cuantiles en validación. Se despliega solo si
+    mejora a la mejor línea base con IC 90 % > 0 (bootstrap de bloques circulares de orígenes completos,
+    bloque = ``bootstrap_bloque``). Si no, se despliega la mejor línea base; no se rescata al segundo
+    mejor. ``bootstrap_bloques_sensibilidad`` se reporta como descripción y no cambia la decisión.
+    """
     from . import metricas
 
     reps, semilla = int(cfg.get("bootstrap_repeticiones", 2000)), int(cfg["semilla"])
+    bloque = int(cfg["bootstrap_bloque"])                    # sin valor por defecto: es parte de la regla
     eleccion = {}
     for h, g in tabla.groupby("h"):
         g = g.set_index("modelo").sort_values("pinball")
         base = g.loc[g.index.isin(lineas_base), "pinball"].idxmin()
         pb = pred[(pred["h"] == h) & (pred["modelo"] == base)]
+        mejor = g.index[0]
         candidatos = []
         for m in g.index:
             if m in lineas_base:
                 continue
-            mej, lo, hi = metricas.bootstrap_mejora(pred[(pred["h"] == h) & (pred["modelo"] == m)], pb,
-                                                    cfg["cuantiles"], reps, semilla, int(cfg.get("bootstrap_bloque", 1)))
-            candidatos.append({"modelo": m, "pinball": float(g.at[m, "pinball"]), "mejora": mej,
-                               "ic90": [lo, hi], "significativa": lo > 0})
-        validos = [c for c in candidatos if c["significativa"]]
-        ganador = min(validos, key=lambda c: c["pinball"])["modelo"] if validos else base
-        eleccion[int(h)] = {"modelo": ganador, "mejor_linea_base": base,
+            pm = pred[(pred["h"] == h) & (pred["modelo"] == m)]
+            mej, lo, hi = metricas.bootstrap_mejora(pm, pb, cfg["cuantiles"], reps, semilla, bloque)
+            sens = []
+            for b in cfg.get("bootstrap_bloques_sensibilidad", []):
+                bs = int(h) if str(b) == "h" else int(b)
+                _, slo, shi = metricas.bootstrap_mejora(pm, pb, cfg["cuantiles"], reps, semilla, bs)
+                sens.append({"bloque": bs, "ic90": [slo, shi], "significativa": slo > 0})
+            candidatos.append({"modelo": m, "pinball": float(g.at[m, "pinball"]), "mejora": mej, "bloque": bloque,
+                               "ic90": [lo, hi], "significativa": lo > 0, "sensibilidad_descriptiva": sens})
+        if mejor in lineas_base:
+            ganador = base
+        else:
+            ganador = mejor if next(c for c in candidatos if c["modelo"] == mejor)["significativa"] else base
+        eleccion[int(h)] = {"modelo": ganador, "mejor_modelo": mejor, "mejor_linea_base": base, "bloque": bloque,
                             "pinball_base": float(g.at[base, "pinball"]), "candidatos": candidatos}
     return eleccion
 

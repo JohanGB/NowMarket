@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mercado-al-dia"
-version = "1.0.0"
+version = "1.1.0"
 description = "Precios mayoristas de alimentos en Bogotá (SIPSA, DANE): qué está barato, pronóstico con intervalos y alertas."
 readme = "README.md"
 requires-python = ">=3.10"

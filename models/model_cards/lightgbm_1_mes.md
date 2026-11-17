@@ -1,39 +1,43 @@
-# Ficha: LightGBM, pronóstico a 1 mes (desplegado)
+# Ficha: LightGBM (NO desplegado desde v1.1, 17-nov-2026)
 
-**Uso.** Pronóstico del precio mayorista en Corabastos el mes siguiente, para los 18 productos de la
-canasta de referencia, con mediana e intervalo del 80 %.
+**Estado.** Se desplegó a 1 mes en la v1.0 (11-nov-2026). Con la regla corregida (D-030) no supera la valla
+en validación y **no se usa**. Se conserva la ficha como registro.
 
-**Modelo.** LightGBM global (todos los productos con al menos 120 meses), directo para h = 1, tres
-regresiones de cuantiles (10, 50 y 90) sobre y = log p(t+1) − log p(t). 300 árboles, tasa 0,05,
-15 hojas, mínimo 40 casos por hoja, submuestreo 0,8. Semilla fija (20261111), modo determinista.
+**Modelo.** LightGBM global, directo por horizonte, con tres regresiones de cuantiles (10, 50 y 90) sobre
+y = log p(t+h) − log p(t).
+- Hiperparámetros: 300 árboles, tasa 0,05, 15 hojas, mínimo 40 casos por hoja, submuestreo 0,8.
+- Semilla fija (20261111) y modo determinista.
+- Productos de entrenamiento elegidos en cada origen solo con datos hasta ese origen: ≥ min(120, meses
+  transcurridos) meses con precio. Son 114 en 2021-11 y 158 en 2025-11. En la v1.0 se contaban sobre toda
+  la muestra, lo que usaba el futuro.
 
-**Variables (todas conocidas en el origen t).** Cambios de 1, 3, 6 y 12 meses; distancia a la media de 12
-meses; volatilidad de 12 meses; cambio del año anterior y de hace dos años en los mismos meses; mes
-objetivo y mes de origen; grupo de alimento; ONI en t−2 y su cambio de 3 meses; variación anual de las
-toneladas que entran a Corabastos en t−1.
+**Variables (todas conocidas en el origen t):**
+- cambios de 1, 3, 6 y 12 meses;
+- distancia a la media de 12 meses y volatilidad de 12 meses;
+- cambio del año anterior y de hace dos años en los mismos meses;
+- mes objetivo y mes de origen;
+- grupo de alimento;
+- ONI en t−2 y su cambio de 3 meses;
+- variación anual de las toneladas que entran a Corabastos en t−1.
 
-**Calibración.** CQR con los errores de validación: el intervalo se ensancha 0,0173 en log (≈ 1,7 %).
+**Validación (bootstrap de bloques circulares de 3 orígenes; regla de `config/modelos.yaml`):**
 
-**Validación sin fuga.** Origen rodante 2021-11 a 2023-10 (selección) y 2023-11 a 2026-09 (prueba única).
+| h | Mejora sobre el ingenuo | IC 90 % | ¿Se despliega? |
+|---|---|---|---|
+| 1 | +4,2 % | [−0,7 %; +8,6 %] | No |
+| 2 | +4,6 % | [−4,7 %; +13,1 %] | No |
+| 3 | +1,3 % | [−8,5 %; +10,2 %] | No |
 
-| Métrica (prueba, 629 casos) | LightGBM | Ingenuo |
-|---|---|---|
-| Pérdida de cuantiles (log) | 0,0297 | 0,0312 |
-| Error típico de la mediana | 9,2 % | 9,7 % |
-| MASE (log) | 0,92 | 0,96 |
-| Cobertura 10–90 | 83,3 % | 81,6 % |
-| Acierto de dirección | 57,7 % | — |
+**Prueba** (2023-11 a 2026-09; segunda y última vez, por corrección de método; no se usa para decidir):
 
-Mejora sobre el ingenuo: 5,1 % en validación (IC 90 % 1,3–8,7 %) y 4,8 % en prueba (IC 90 % 1,0–8,7 %).
+| | 1 mes | 2 meses | 3 meses |
+|---|---|---|---|
+| Pérdida de cuantiles (log) | 0,0298 | 0,0473 | 0,0569 |
+| Error típico de la mediana | 9,2 % | 15,6 % | 18,9 % |
+| Cobertura 10–90 | 83,5 % | 80,5 % | 85,2 % |
+| Mejora sobre el ingenuo | 4,7 % | 5,7 % | 9,7 % |
+| IC 90 % de la mejora (bloques de 3) | [0,4 %; 8,5 %] | [−0,6 %; 11,4 %] | [2,8 %; 16,0 %] |
 
-**Sesgos y límites.**
-- Ganancia pequeña sobre "el precio se mantiene": el valor está sobre todo en un rango bien calibrado.
-- Por producto (prueba a 1 mes), el error típico va de 1,3 % (arroz) a 19,6 % (cebolla cabezona blanca);
-  en papa pastusa, papa criolla, mora y zanahoria la cobertura baja a 74–77 %: los choques recientes
-  (El Niño 2026) superan lo visto en validación.
-- La decisión de desplegarlo en validación es frágil si se respeta la autocorrelación entre meses (con
-  bloques de 6 orígenes el IC 90 % incluye 0); en la prueba la mejora se sostiene con cualquier bloque.
-- Mayorista no es consumidor. Pesos corrientes.
-
-**Cuándo no usarlo.** Para productos fuera de los 18 evaluados; para más de un mes (ahí se usa el
-ingenuo calibrado); ante un choque conocido que aún no está en los datos (paro, cierre de vías).
+**Por qué no se rescata.** La regla se fijó antes y decide en validación (D-024, D-030). Con solo 23 orígenes de
+validación y meses dependientes entre sí, la mejora no se vio con la seguridad exigida. Se reevaluará con una
+ventana de validación nueva, por ejemplo con datos de 2027.

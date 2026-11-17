@@ -129,7 +129,8 @@ def test_seleccion_se_queda_con_la_linea_base_si_la_mejora_no_es_significativa()
     casi = base.assign(modelo="lightgbm", q10=base["q10"] + ruido, q50=base["q50"] + ruido, q90=base["q90"] + ruido)
     pred = pd.concat([base, casi])
     tabla = ev.tabla_metricas(pred, {"cuantiles": [0.1, 0.5, 0.9]}, {"a": 1, "b": 1, "c": 1})
-    sel = ev.seleccionar(tabla, pred, ["ingenuo"], {"cuantiles": [0.1, 0.5, 0.9], "semilla": 1, "bootstrap_repeticiones": 300})
+    sel = ev.seleccionar(tabla, pred, ["ingenuo"], {"cuantiles": [0.1, 0.5, 0.9], "semilla": 1, "bootstrap_repeticiones": 300,
+                                                       "bootstrap_bloque": CFG["bootstrap_bloque"]})
     assert sel[1]["modelo"] == "ingenuo"
 
 

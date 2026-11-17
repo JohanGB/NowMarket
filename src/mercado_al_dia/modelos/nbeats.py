@@ -13,7 +13,7 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
-from .datos import Datos
+from .datos import Datos, productos_entrenamiento
 from .familias import _Base, _filas
 
 
@@ -44,6 +44,7 @@ class NBeats(_Base):
     def __init__(self, cfg):
         super().__init__(cfg)
         self.params = None
+        self.productos_por_ajuste: dict[str, int] = {}
 
     def _red(self):
         import jax
@@ -84,7 +85,10 @@ class NBeats(_Base):
         import optax
 
         c, H = self.cfg["nbeats"], max(self.h)
-        L = datos.logp[datos.entrenamiento].to_numpy()
+        productos = productos_entrenamiento(datos.logp, hasta, int(self.cfg["meses_minimos_entrenamiento"]),
+                                            datos.entrenamiento)                 # solo datos hasta `hasta`
+        self.productos_por_ajuste[str(hasta)] = len(productos)
+        L = datos.logp[productos].to_numpy()
         idx_hasta = datos.logp.index.get_loc(hasta)
         X, Y = _ventanas(L, c["ventana"], H, idx_hasta)
         iniciar, adelante = self._red()

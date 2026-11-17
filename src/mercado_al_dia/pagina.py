@@ -84,7 +84,7 @@ def construir(destino: Path, *, indicadores: list[Indicador], referencia: dict[s
     return destino
 
 
-CUERPO = r"""<title>Mercado al Día</title>
+CUERPO = r"""<title>NowMarket</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Source+Sans+3:wght@400;600&display=swap">
@@ -154,7 +154,7 @@ code{font-size:.78rem;word-break:break-all}
 <main>
 <header>
   <p class="lugar" id="lugar"></p>
-  <h1>Mercado al Día</h1>
+  <h1>NowMarket</h1>
   <p class="sub" id="sub"></p>
 </header>
 <nav aria-label="Vistas">
@@ -318,7 +318,9 @@ function pintarProducto(){
   let pronHtml = '<p class="nota">Pronóstico validado solo para los 18 productos de la canasta de referencia.</p>';
   if (pr && pr.length){
     pronHtml = '<div class="pronos">' + pr.map(f => `<div><span class="sub">${mesCorto(f.mes)}</span><b>${pesos(f.q50)}</b><span class="sub">${pesos(f.q10)} a ${pesos(f.q90)}</span></div>`).join('') + '</div>'
-      + '<p class="nota">Lo más probable y el rango donde cae 8 de cada 10 veces. A 1 mes pronostica un modelo de aprendizaje automático; a 2 y 3 meses se muestra el precio actual con su rango, porque ningún modelo le ganó de forma comprobada a esa distancia.</p>';
+      + (pr.every(f => f.modelo === 'ingenuo')
+        ? '<p class="nota">Lo más probable y el rango donde cae 8 de cada 10 veces. Se muestra el precio actual con su rango calibrado, porque en la validación ningún modelo le ganó de forma comprobada en 1, 2 ni 3 meses.</p>'
+        : '<p class="nota">Lo más probable y el rango donde cae 8 de cada 10 veces. Donde un modelo le ganó de forma comprobada al precio actual se usa ese modelo; en los demás meses se muestra el precio actual con su rango.</p>');
   }
   $('p-resumen').innerHTML = `<h2>${esc(p.nombre)}</h2><div class="cifra-grande">${pesos(p.precio)} <span class="sub">por ${UNI[p.unidad]}</span></div>
     <p><b class="${p.estado}">${estadoTxt(p)}</b>: ${pct(p.var12)} frente a la mediana de su último año (${pesos(p.mediana)}). Frente a ${MES_L[mesNum]} del año pasado: ${pct(p.anual)}.</p>
@@ -410,7 +412,9 @@ function pronCanasta(){
   $('t-nota').textContent = 'Pronóstico a un mes para los 18 productos de la canasta. Sube o baja "lo más probable" si la mitad del rango se mueve 5 % o más; "con al menos 90 %" si todo el rango queda de un solo lado del precio actual.';
   const NIV = {alza_segura: ['caro', 'Sube'], alza_probable: ['caro', 'Sube'], baja_segura: ['barato', 'Baja'], baja_probable: ['barato', 'Baja']};
   $('t-alertas').innerHTML = A.length ? A.map(a => `<div class="alerta"><span class="pill ${NIV[a.nivel][0]}">${NIV[a.nivel][1]}</span><div><b>${esc(a.producto)}</b><div class="sub">${esc(a.texto)}</div></div></div>`).join('')
-    : '<p>Ningún producto de la canasta tiene un cambio esperado de 5 % o más.</p>';
+    : (pr1 && pr1.modelo === 'ingenuo'
+      ? '<p>Sin alertas. A 1 mes se usa el precio actual con su rango (ningún modelo le ganó de forma comprobada), así que solo habría alerta si todo el rango quedara de un lado del precio actual, y hoy no pasa en ningún producto.</p>'
+      : '<p>Ningún producto de la canasta tiene un cambio esperado de 5 % o más.</p>');
   if (M.prueba){
     $('t-modelos').innerHTML = '<table><tr><th>A</th><th>Método</th><th class="n">Error típico</th><th class="n">Cubrió</th></tr>' +
       M.prueba.map(r => `<tr><td>${r.h} ${r.h === 1 ? 'mes' : 'meses'}</td><td>${esc(r.corto || r.nombre)}</td><td class="n">${pct1(r.mae_pct)}</td><td class="n">${pct1(r.cobertura)}</td></tr>`).join('') + '</table>';
@@ -426,6 +430,6 @@ $('pie').innerHTML = `
   <p><b>Consejo de temporada:</b> ${V.mostrar ? `se muestra porque, probado mes a mes de ${V.desde} a ${V.hasta} sin mirar el futuro, acertó si el precio subía o bajaba el ${pct1(V.tasa)} de ${V.n.toLocaleString('es-CO')} veces (IC 95 %: ${pct1(V.lo)} a ${pct1(V.hi)}), frente a ${pct1(V.base)} de repetir lo del año anterior.`
     : `no se muestra: en la prueba sin mirar el futuro acertó ${pct1(V.tasa)}, sin superar la línea base (${pct1(V.base)}) o el mínimo de ${pct1(V.minimo)}.`}</p>
   <p>Fuente: Departamento Administrativo Nacional de Estadística (DANE), SIPSA, series históricas mensuales de precios mayoristas y de abastecimiento; índice ONI de la NOAA. Cada precio indica el archivo, la hoja y la fila de donde salió. No es asesoría financiera.</p>
-  <p>Mercado al Día v${esc(D.version)} · generado ${esc(D.generado.replace('T', ' '))}</p>`;
+  <p>NowMarket v${esc(D.version)} · generado ${esc(D.generado.replace('T', ' '))}</p>`;
 ver(location.hash.slice(1), false);
 </script>"""

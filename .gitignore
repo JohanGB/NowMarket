@@ -38,3 +38,6 @@ Thumbs.db
 desktop.ini
 .DS_Store
 ~$*.xlsx
+
+# Instrucciones privadas de trabajo (quedan solo en el disco del autor)
+PROMPT_MAESTRO.md

@@ -51,26 +51,35 @@ def perdida_por_caso(pred: pd.DataFrame, cuantiles: list[float]) -> np.ndarray:
     return np.mean([pinball(y, pred[c].to_numpy(), t) for c, t in zip(cols, cuantiles)], axis=0)
 
 
+def indices_bloques(n: int, bloque: int, repeticiones: int, rng: np.random.Generator) -> np.ndarray:
+    """Índices de un bootstrap de bloques circulares (Politis y Romano, 1992): matriz repeticiones × n.
+
+    Cada bloque son ``bloque`` orígenes consecutivos y da la vuelta al final de la serie, así todos los
+    orígenes tienen la misma probabilidad de salir. Corrección (c) de la auditoría: la versión anterior
+    (bloques móviles sin vuelta) sorteaba menos los primeros y últimos orígenes y desplazaba el IC.
+    Con ``bloque`` = 1 es el bootstrap iid de orígenes.
+    """
+    b = max(1, int(bloque))
+    if b == 1:
+        return rng.integers(0, n, size=(repeticiones, n))
+    inicios = rng.integers(0, n, size=(repeticiones, math.ceil(n / b)))
+    return ((inicios[:, :, None] + np.arange(b)) % n).reshape(repeticiones, -1)[:, :n]
+
+
 def bootstrap_mejora(a: pd.DataFrame, b: pd.DataFrame, cuantiles: list[float], repeticiones: int,
                      semilla: int, bloque: int = 1) -> tuple[float, float, float]:
     """Mejora relativa de `a` sobre `b` (1 − pérdida_a/pérdida_b) con IC 90 % por bootstrap de orígenes.
 
     Se remuestrean orígenes completos (no casos sueltos) porque los productos de un mismo mes
-    comparten choques y no son independientes. Con ``bloque`` > 1 se remuestrean bloques de
-    orígenes consecutivos (bootstrap de bloques móviles), que además respeta la autocorrelación
-    entre meses; la revisión independiente recomienda bloque ≥ h para la próxima validación (D-024).
+    comparten choques y no son independientes. Con ``bloque`` > 1 se remuestrean bloques circulares de
+    orígenes consecutivos, que además respetan la autocorrelación entre meses (``bootstrap_bloque`` en
+    config/modelos.yaml; D-024 y D-030).
     """
     k = ["pid", "origen", "h"]
     m = a.assign(la=perdida_por_caso(a, cuantiles))[k + ["la"]].merge(
         b.assign(lb=perdida_por_caso(b, cuantiles))[k + ["lb"]], on=k)
-    por_origen = m.groupby("origen")[["la", "lb"]].sum()
+    por_origen = m.groupby("origen")[["la", "lb"]].sum().sort_index()      # orden cronológico (AAAA-MM)
     la, lb = por_origen["la"].to_numpy(), por_origen["lb"].to_numpy()
-    rng = np.random.default_rng(semilla)
-    n, b = len(la), max(1, int(bloque))
-    if b == 1:
-        idx = rng.integers(0, n, size=(repeticiones, n))
-    else:
-        inicios = rng.integers(0, n - b + 1, size=(repeticiones, math.ceil(n / b)))
-        idx = (inicios[:, :, None] + np.arange(b)).reshape(repeticiones, -1)[:, :n]
+    idx = indices_bloques(len(la), bloque, repeticiones, np.random.default_rng(semilla))
     mejoras = 1 - la[idx].sum(axis=1) / lb[idx].sum(axis=1)
     return float(1 - la.sum() / lb.sum()), float(np.quantile(mejoras, 0.05)), float(np.quantile(mejoras, 0.95))

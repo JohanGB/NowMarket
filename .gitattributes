@@ -1,0 +1,3 @@
+# Fin de línea LF en el repositorio y en la copia de trabajo: el registro de modelos debe quedar byte a byte.
+* text=auto eol=lf
+*.xlsx binary

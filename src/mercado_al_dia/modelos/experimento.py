@@ -68,6 +68,8 @@ def correr(raiz: Path, fase: str, con_nbeats: bool = True, forzar: bool = False,
             extra[f"fallas_{m.nombre}"] = m.fallas[:20]
         if m.nombre == "lightgbm":
             extra["importancia_lightgbm"] = m.importancia()
+        if getattr(m, "productos_por_ajuste", None):
+            extra[f"productos_entrenamiento_{m.nombre}"] = m.productos_por_ajuste
         p["familia"] = m.familia
         preds.append(p)
     preds = [p for p in preds if len(p)]
@@ -116,7 +118,7 @@ def main(argv=None) -> int:
             f.reconfigure(encoding="utf-8")
         except (AttributeError, ValueError):
             pass
-    p = argparse.ArgumentParser(description="Fase 2 de Mercado al Día: validación y prueba de modelos.")
+    p = argparse.ArgumentParser(description="Fase 2 de NowMarket: validación y prueba de modelos.")
     p.add_argument("fase", choices=["validacion", "prueba"])
     p.add_argument("--raiz", type=Path, default=Path.cwd())
     p.add_argument("--sin-nbeats", action="store_true")
@@ -128,10 +130,13 @@ def main(argv=None) -> int:
           .to_string(index=False, float_format=lambda x: f"{x:.4f}"))
     if a.fase == "validacion":
         for h, s in r["seleccion"].items():
-            print(f"h={h}: se despliega {s['modelo']} (mejor línea base: {s['mejor_linea_base']})")
+            print(f"h={h}: se despliega {s['modelo']} (menor pérdida: {s['mejor_modelo']}; "
+                  f"mejor línea base: {s['mejor_linea_base']}; bloque {s['bloque']})")
             for c in s["candidatos"]:
+                sens = "  ".join(f"b={x['bloque']} [{x['ic90'][0]:+.1%}, {x['ic90'][1]:+.1%}]"
+                                 for x in c.get("sensibilidad_descriptiva", []))
                 print(f"     {c['modelo']:9} mejora {c['mejora']:+.1%}  IC90 [{c['ic90'][0]:+.1%}, {c['ic90'][1]:+.1%}]"
-                      + ("  significativa" if c["significativa"] else ""))
+                      + ("  significativa" if c["significativa"] else "") + (f"   (sensibilidad: {sens})" if sens else ""))
     return 0
 
 

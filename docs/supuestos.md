@@ -27,6 +27,6 @@ Fecha: 11-nov-2026. Cada supuesto indica cómo se va a comprobar. Si uno resulta
 | # | Supuesto | Por qué lo asumimos | Cómo se comprueba |
 |---|---|---|---|
 | S13 | El precio del mes t se conoce a comienzos de t+1; el ONI de la temporada que termina en t−1, en t; el abastecimiento de t−1, a mediados de t | Calendarios de publicación del DANE y de la NOAA | Rezagos en `config/modelos.yaml`; prueba `test_caracteristicas_usan_exogenas_con_rezago` |
-| S14 | Los errores de validación representan los futuros (base de la calibración CQR) | Supuesto de intercambiabilidad de la predicción conformal | Cobertura en la prueba: 82,6–83,3 % (meta 80 %). Falla en papas y zanahoria (67–72 %) |
+| S14 | Los errores de validación representan los futuros (base de la calibración CQR) | Supuesto de intercambiabilidad de la predicción conformal | Cobertura en la prueba (v1.1, ingenuo calibrado): 80,6–82,8 % (meta 80 %). Falla por producto (`models/registro/prueba_por_producto.csv`, ingenuo calibrado): papa criolla 68,6 % a 1 mes, 61,8 % a 2 y 69,7 % a 3; zanahoria 74,3 % a 1 mes, 64,7 % a 2 y 57,6 % a 3. La papa pastusa no falla (77,1 %, 85,3 % y 81,8 %) |
 | S15 | Sumar los rangos de los productos da un rango conservador para la canasta | Equivale a suponer que todos suben o bajan a la vez | Declarado en la página; no se calcula la dependencia entre productos |
 | S16 | Los sustitutos de `config/sustitutos.yaml` son intercambiables en la cocina | Criterio del autor, no estadístico | Editable; la página solo cambia productos con la misma unidad |

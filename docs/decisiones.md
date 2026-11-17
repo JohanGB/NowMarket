@@ -138,6 +138,62 @@ protocolo, cifras y página. No encontró fugas y reprodujo la selección. Se co
 Quedan documentadas como limitaciones la fragilidad del bootstrap (D-024), el filtro de productos con toda
 la muestra y las versiones de las exógenas (`docs/modelos.md`).
 
+## Adenda del 17-nov-2026 (escrita ANTES de volver a correr el experimento)
+
+**D-030 · Corrección de errores de método y repetición única de la prueba.**
+
+La auditoría independiente (`docs/auditoria_independiente.md`, 17-nov-2026) encontró errores en el
+**método** con que se eligió y se evaluó el modelo. No se encontró ninguno en los datos. Se corrigen en este
+orden (versión 1.1.0, commit «Paso 2»), siguiendo lo que ya decían `docs/modelos.md` y `config/modelos.yaml`:
+
+- **(a) Lista de productos de entrenamiento con datos del futuro.** Los modelos globales (LightGBM y
+  N-BEATS) elegían sus productos contando los meses de **toda** la muestra (≥ 120). Eso usaba
+  información posterior a cada origen.
+  - Ahora la lista se elige en cada reentrenamiento con los precios hasta el origen.
+  - Contados así, ningún producto llega a 120 meses antes de 2022-12, porque el panel empieza en
+    2013-01. Por decisión del autor, el mínimo es `min(120, meses transcurridos)`: en los orígenes
+    tempranos se exige la historia completa.
+  - Productos de entrenamiento resultantes: 114 en 2021-11, 103 en 2022-11, 138 en 2023-11 y 160 al final.
+- **(b) Calibración conformal (CQR).** Se tomaba el elemento k+1 de los errores ordenados. Ahora se toma
+  el k = ⌈(n+1)·0,8⌉ que indica Romano et al. (2019).
+- **(c) Bootstrap y regla de despliegue:**
+  1. `docs/modelos.md` prometía `bootstrap_bloque` en la configuración, pero no estaba. El código usaba
+     en silencio bloques de 1 mes, como si los orígenes consecutivos fueran independientes.
+  2. Se fija `bootstrap_bloque: 3`. Razón: el documento exige «bloques de al menos h meses», el
+     horizonte máximo es 3 y hay una sola clave, así que 3 es el único valor fijo que cumple la regla en
+     todos los horizontes.
+  3. Los bloques ahora son **circulares**. Los bloques móviles anteriores sorteaban menos los
+     orígenes de los extremos y desplazaban el IC.
+  4. b = h y b = 6 se reportan solo como **sensibilidad descriptiva**: no cambian la decisión.
+  5. La regla se aplica **tal como está escrita**: se toma el modelo de menor pérdida de cuantiles en
+     validación y se despliega solo si su IC 90 % frente a la mejor línea base es mayor que 0. Si no,
+     se despliega la mejor línea base. Ya no se recurre al segundo mejor.
+- Nuevas pruebas (`tests/test_auditoria.py`) para los cuatro errores que las pruebas no detectaban:
+  SARIMAX con el futuro, CQR con datos de la prueba, bootstrap de casos sueltos y validación con
+  objetivos dentro de la prueba.
+
+**Por qué se repite la prueba.** La ventana de prueba (2023-11 a 2026-09) ya se usó una vez, el
+11-nov-2026. Se usa **una segunda y última vez** (`prueba --forzar`, que queda anotado como `forzada: true`)
+**por la corrección de errores de método, no por sus resultados**.
+- Ninguna de las tres correcciones se eligió mirando la prueba. (a) y (b) arreglan errores de
+  implementación. En (c), el tamaño de bloque sale del texto de `docs/modelos.md`.
+- Transparencia: la auditoría sí calculó IC con varios bloques en validación y en prueba antes de esta
+  adenda. Por eso el bloque no se eligió entre esas cifras, sino con la regla escrita.
+- No se agrega la corrección por comparaciones múltiples (Bonferroni) que sugirió la auditoría. No
+  estaba en la regla escrita y añadirla ahora sería cambiar la regla después de ver resultados. Queda
+  como limitación declarada.
+
+**Compromiso previo.**
+- Se despliega lo que diga la regla, sin excepciones.
+- Si LightGBM a 1 mes ya no cumple, se despliega el ingenuo calibrado y se dice así.
+- Si algún modelo pasa a cumplir a 2 o 3 meses, se despliega por la misma regla.
+- El registro anterior queda intacto en `models/registro_antes/` y en la etiqueta git `estado-auditado`.
+- `docs/modelos.md` publicará ambas versiones lado a lado.
+
+**Lo que no cambia en esta corrida:**
+- El hallazgo 7 (saltos ×3 a través de huecos, solo de reporte) queda pendiente.
+- Las dudas sobre versiones de los datos y el horizonte efectivo siguen como limitaciones.
+
 ## Decisiones que necesita el autor
 
-1. **Publicar el repositorio en GitHub** cuando lo considere listo (incluye `.github/workflows/pruebas.yml`).
+1. **Publicar el repositorio en GitHub** (NowMarket) cuando lo considere listo. Aún no existe `.github/workflows/`: falta crear la integración continua.
